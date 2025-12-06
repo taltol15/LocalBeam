@@ -1,19 +1,60 @@
-# README
+# 📡 LocalBeam
 
-## About
+> **Fast. Secure. Local.**
+> The easiest way to transfer files between devices on your local network. No internet required.
 
-This is the official Wails React template.
+![LocalBeam Screenshot](https://localbeam.net/app-screen.png) 
+*(Note: Make sure to upload a screenshot named app-screen.png to your repo or site to see it here)*
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+## 🚀 Overview
 
-## Live Development
+**LocalBeam** is a modern, lightweight desktop application designed to solve a simple problem: moving files between computers on the same Wi-Fi/LAN without using the cloud, email, or USB drives.
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+Built with **Go** (backend) and **React** (frontend) using the **Wails** framework, it combines native performance with a beautiful modern UI.
 
-## Building
+## ✨ Features
 
-To build a redistributable, production mode package, use `wails build`.
+* **🔍 Auto-Discovery:** Automatically finds other devices running LocalBeam on your network using UDP broadcast.
+* **⚡ Blazing Fast:** Transfers files directly over LAN (peer-to-peer). Speed is only limited by your Wi-Fi.
+* **🔒 Secure:** Every transfer requires a dynamic **Security PIN**. No unwanted files.
+* **📉 Real-time Progress:** Visual progress bars for both sender and receiver.
+* **🌐 Offline First:** No internet connection needed. Your data never leaves your local network.
+* **💾 Smart Memory:** Handles large files (GBs) efficiently without crashing RAM.
+
+## 📥 Download
+
+Get the latest version for Windows from the **[Releases Page](../../releases)**.
+
+## 🛠️ Tech Stack
+
+* **Backend:** Go (Golang)
+* **Frontend:** React + Vite
+* **Framework:** Wails v2
+* **Styling:** CSS3 (Custom Dark Mode Theme)
+
+## 🚀 How to Run (for Developers)
+
+If you want to build it yourself:
+
+1.  Install [Go](https://go.dev/) and [Node.js](https://nodejs.org/).
+2.  Install Wails: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
+3.  Clone the repo:
+    ```bash
+    git clone [https://github.com/taltol15/LocalBeam.git](https://github.com/taltol15/LocalBeam.git)
+    cd LocalBeam
+    ```
+4.  Run in dev mode:
+    ```bash
+    wails dev
+    ```
+5.  Build for production:
+    ```bash
+    wails build
+    ```
+
+## 📝 License
+
+This project is open-source and available under the **MIT License**.
+
+---
+*Developed with ❤️ by Tal*
