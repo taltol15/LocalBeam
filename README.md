@@ -4,7 +4,7 @@
 > The easiest way to transfer files between devices on your local network. No internet required.
 
 ![LocalBeam Screenshot](https://localbeam.net/app-screen.png) 
-*(Note: Make sure to upload a screenshot named app-screen.png to your repo or site to see it here)*
+
 
 ## 🚀 Overview
 
