@@ -1,5 +1,5 @@
 # 📡 LocalBeam
-
+![Downloads](https://img.shields.io/github/downloads/taltol15/LocalBeam/total?style=for-the-badge&color=blue)
 > **Fast. Secure. Local.**
 > The easiest way to transfer files between devices on your local network. No internet required.
 
