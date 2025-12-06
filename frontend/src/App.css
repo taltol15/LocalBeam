@@ -1,0 +1,176 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a1b26;
+    color: #a9b1d6;
+    overflow: hidden;
+}
+
+.app-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Header & PIN */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #2f334d;
+    padding-bottom: 20px;
+}
+
+h1 { margin: 0; color: #7aa2f7; font-size: 1.5rem; }
+
+.my-pin-card {
+    background: linear-gradient(135deg, #7aa2f7 0%, #3d59a1 100%);
+    padding: 10px 20px;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(61, 89, 161, 0.4);
+}
+
+.my-pin-card span { font-size: 0.7rem; opacity: 0.8; letter-spacing: 1px; }
+.pin-digits { font-size: 1.5rem; font-weight: bold; letter-spacing: 3px; }
+
+/* Grid for Peers */
+.radar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.peer-card {
+    background-color: #24283b;
+    border: 1px solid #414868;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.peer-card:hover {
+    transform: translateY(-2px);
+    border-color: #7aa2f7;
+}
+
+.peer-icon { font-size: 2rem; margin-right: 15px; }
+
+.peer-info { flex-grow: 1; }
+.peer-name { font-weight: bold; color: #c0caf5; margin-bottom: 4px; }
+.peer-ip { font-size: 0.8rem; color: #565f89; }
+
+button {
+    background-color: #7aa2f7;
+    color: #1a1b26;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+button:hover { background-color: #9aa5ce; }
+
+/* Notifications */
+.notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    color: white;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification.success { background-color: #4fd6be; color: #15161e; }
+.notification.error { background-color: #f7768e; color: white; }
+.notification.info { background-color: #bb9af7; color: #15161e; }
+
+.sub-text { font-size: 0.75em; margin-top: 5px; opacity: 0.8; white-space: pre-wrap; }
+
+.scanning { text-align: center; width: 100%; grid-column: 1 / -1; opacity: 0.5; margin-top: 50px; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Progress Overlay */
+.progress-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.progress-box {
+    background-color: #24283b;
+    padding: 30px;
+    border-radius: 15px;
+    width: 300px;
+    text-align: center;
+    border: 1px solid #7aa2f7;
+    box-shadow: 0 0 20px rgba(122, 162, 247, 0.3);
+}
+
+.progress-bar-bg {
+    background-color: #1a1b26;
+    height: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7aa2f7, #bb9af7);
+    transition: width 0.2s ease;
+}
+
+.progress-text {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+}
+
+/* Footer */
+.footer {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #565f89; /* צבע אפור-כחלחל עדין */
+    font-size: 0.85rem;
+    pointer-events: none; /* כדי שאפשר יהיה ללחוץ דרכו אם צריך */
+}
+
+.footer strong {
+    color: #7aa2f7; /* הצבע הכחול של המותג */
+}
+
+/* התאמה קטנה לגריד כדי שלא יסתיר את הפוטר כשיש הרבה מחשבים */
+.radar-grid {
+    padding-bottom: 60px; /* מפנה מקום למטה */
+}
