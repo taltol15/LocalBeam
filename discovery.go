@@ -11,12 +11,12 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const broadcastPort = 9999
-
-// Peer מייצג מחשב ברשת
+// Peer is a discovered device on the LAN (UDP and/or mDNS).
 type Peer struct {
 	Hostname string `json:"hostname"`
 	IP       string `json:"ip"`
+	Port     int    `json:"port"`
+	Version  string `json:"version,omitempty"`
 }
 
 // DiscoveryService אחראי על מציאת מחשבים
@@ -32,15 +32,20 @@ func NewDiscoveryService() *DiscoveryService {
 	}
 
 	return &DiscoveryService{
-		MyPeer: Peer{Hostname: hostname, IP: ""},
-		Peers:  make(map[string]Peer),
+		MyPeer: Peer{
+			Hostname: hostname,
+			IP:       "",
+			Port:     FileTransferPort,
+			Version:  ProtocolVersion,
+		},
+		Peers: make(map[string]Peer),
 	}
 }
 
 // StartBroadcasting שולח הודעות "אני כאן" לרשת
 func (d *DiscoveryService) StartBroadcasting() {
 	// 1. שידור לכל הרשת (Broadcast) - למחשבים אחרים
-	broadcastAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("255.255.255.255:%d", broadcastPort))
+	broadcastAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("255.255.255.255:%d", BroadcastPort))
 	broadcastConn, err := net.DialUDP("udp", nil, broadcastAddr)
 	if err != nil {
 		fmt.Println("Error broadcasting:", err)
@@ -49,7 +54,7 @@ func (d *DiscoveryService) StartBroadcasting() {
 	defer broadcastConn.Close()
 
 	// 2. שידור לוקאלי (Localhost) - כדי שווינדוס יראה את עצמו (תיקון ל-Loopback)
-	localAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", broadcastPort))
+	localAddr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", BroadcastPort))
 	localConn, _ := net.DialUDP("udp", nil, localAddr)
 	if localConn != nil {
 		defer localConn.Close()
@@ -73,7 +78,7 @@ func (d *DiscoveryService) StartBroadcasting() {
 
 // StartListening מקשיב להודעות ממחשבים אחרים ומעדכן את הממשק
 func (d *DiscoveryService) StartListening(ctx context.Context) {
-	addr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", broadcastPort))
+	addr, _ := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", BroadcastPort))
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		fmt.Println("Error listening:", err)
@@ -98,8 +103,13 @@ func (d *DiscoveryService) StartListening(ctx context.Context) {
 			continue
 		}
 
-		// עדכון ה-IP לכתובת האמיתית
 		newPeer.IP = remoteAddr.IP.String()
+		if newPeer.Port == 0 {
+			newPeer.Port = FileTransferPort
+		}
+		if newPeer.Version == "" {
+			newPeer.Version = "1"
+		}
 
 		// בדיקה אם זה מחשב חדש (רק לצורך הלוג בטרמינל)
 		if _, exists := d.Peers[newPeer.IP]; !exists {

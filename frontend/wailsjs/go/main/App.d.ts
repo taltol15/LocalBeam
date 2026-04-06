@@ -3,6 +3,8 @@
 
 export function GetMyPIN():Promise<string>;
 
+export function ProtocolInfo():Promise<string>;
+
 export function SelectFile():Promise<string>;
 
 export function SendFile(arg1:string,arg2:string,arg3:string):Promise<string>;

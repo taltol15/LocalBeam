@@ -6,6 +6,10 @@ export function GetMyPIN() {
   return window['go']['main']['App']['GetMyPIN']();
 }
 
+export function ProtocolInfo() {
+  return window['go']['main']['App']['ProtocolInfo']();
+}
+
 export function SelectFile() {
   return window['go']['main']['App']['SelectFile']();
 }

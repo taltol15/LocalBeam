@@ -3,12 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"github.com/grandcat/zeroconf"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
 	ctx       context.Context
+	runCtx    context.Context
+	runCancel context.CancelFunc
 	discovery *DiscoveryService
+	mdnsSrv   *zeroconf.Server
 }
 
 func NewApp() *App {
@@ -19,9 +24,30 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	a.runCtx, a.runCancel = context.WithCancel(context.Background())
+
 	go a.discovery.StartBroadcasting()
 	go a.discovery.StartListening(ctx)
 	go StartFileServer(ctx)
+
+	if srv, err := RegisterMDNS(a.discovery.MyPeer.Hostname); err != nil {
+		fmt.Println("mDNS register:", err)
+	} else {
+		a.mdnsSrv = srv
+	}
+
+	BrowseMDNS(a.runCtx, ctx)
+}
+
+func (a *App) shutdown(_ context.Context) {
+	if a.runCancel != nil {
+		a.runCancel()
+	}
+	if a.mdnsSrv != nil {
+		a.mdnsSrv.Shutdown()
+		a.mdnsSrv = nil
+	}
+	ShutdownFileServer()
 }
 
 func (a *App) SelectFile() string {
@@ -34,19 +60,17 @@ func (a *App) SelectFile() string {
 	return selection
 }
 
-// SendFile - עכשיו מקבל גם pinCode
-func (a *App) SendFile(ip string, filePath string, pinCode string) string {
-	fmt.Printf("Sending file to %s with PIN %s\n", ip, pinCode)
-	
-	err := SendFileToPeer(ip, filePath, pinCode)
-	if err != nil {
+func (a *App) SendFile(address string, filePath string, pinCode string) string {
+	if err := SendFileToPeer(address, filePath, pinCode); err != nil {
 		return "Error: " + err.Error()
 	}
-	
-	return "Success" // הודעה קצרה כדי שהפרונט יזהה הצלחה
+	return "Success"
 }
 
-// GetMyPIN - מחזיר את הקוד הסודי של המחשב הזה
 func (a *App) GetMyPIN() string {
 	return GetCurrentPIN()
+}
+
+func (a *App) ProtocolInfo() string {
+	return ProtocolVersion
 }

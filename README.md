@@ -1,60 +1,90 @@
-# 📡 LocalBeam
+# LocalBeam
+
 ![Downloads](https://img.shields.io/github/downloads/taltol15/LocalBeam/total?style=for-the-badge&color=blue)
-> **Fast. Secure. Local.**
-> The easiest way to transfer files between devices on your local network. No internet required.
 
-![LocalBeam Screenshot](https://localbeam.net/app-screen.png) 
+> **Fast. Secure. Local.**  
+> Move files between computers on the same Wi‑Fi or LAN—no cloud, no accounts. **Windows, macOS, and Linux.**
 
+![LocalBeam Screenshot](https://localbeam.net/app-screen.png)
 
-## 🚀 Overview
+## Overview
 
-**LocalBeam** is a modern, lightweight desktop application designed to solve a simple problem: moving files between computers on the same Wi-Fi/LAN without using the cloud, email, or USB drives.
+**LocalBeam** is a desktop app for peer-to-peer file transfer on your local network. Transfers use a direct HTTP connection; data stays on your LAN.
 
-Built with **Go** (backend) and **React** (frontend) using the **Wails** framework, it combines native performance with a beautiful modern UI.
+Built with **Go** and **React** (Vite) using **Wails v2**.
 
-## ✨ Features
+## Features (2.x)
 
-* **🔍 Auto-Discovery:** Automatically finds other devices running LocalBeam on your network using UDP broadcast.
-* **⚡ Blazing Fast:** Transfers files directly over LAN (peer-to-peer). Speed is only limited by your Wi-Fi.
-* **🔒 Secure:** Every transfer requires a dynamic **Security PIN**. No unwanted files.
-* **📉 Real-time Progress:** Visual progress bars for both sender and receiver.
-* **🌐 Offline First:** No internet connection needed. Your data never leaves your local network.
-* **💾 Smart Memory:** Handles large files (GBs) efficiently without crashing RAM.
+- **Discovery:** UDP broadcast **plus** **mDNS** (Bonjour / DNS‑SD) so devices find each other more reliably across **Windows ↔ macOS** (and mixed home networks).
+- **Manual address:** Send to an IP or `host:port` if discovery does not list a peer.
+- **Security PIN:** A dynamic 4-digit PIN is required for every incoming transfer.
+- **Progress:** Sender and receiver show upload/download progress.
+- **Offline-first:** No internet required.
+- **Streaming I/O:** Large files are streamed; memory use stays reasonable.
+- **Protocol v2:** Versioned discovery payload and `X-LocalBeam-Version` header; `GET /localbeam/ping` for connectivity checks (useful for future mobile clients).
 
-## 📥 Download
+## Download
 
-Get the latest version for Windows from the **[Releases Page](../../releases)**.
+Prebuilt binaries are attached to **[GitHub Releases](https://github.com/taltol15/LocalBeam/releases)**.
 
-## 🛠️ Tech Stack
+| Asset | Platform |
+|--------|-----------|
+| `localbeam-windows-amd64.zip` | Windows (amd64) |
+| `localbeam-macos-universal.zip` | macOS (Intel + Apple Silicon) |
+| `localbeam-linux-amd64.tar.gz` | Linux (amd64) |
 
-* **Backend:** Go (Golang)
-* **Frontend:** React + Vite
-* **Framework:** Wails v2
-* **Styling:** CSS3 (Custom Dark Mode Theme)
+**macOS:** Open the app from the zip; if Gatekeeper blocks it, use **System Settings → Privacy & Security** or right‑click → Open the first time.
 
-## 🚀 How to Run (for Developers)
+**Firewall:** Allow LocalBeam on private networks if prompted (incoming connections on the transfer port are required to receive files).
 
-If you want to build it yourself:
+## Tech stack
 
-1.  Install [Go](https://go.dev/) and [Node.js](https://nodejs.org/).
-2.  Install Wails: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
-3.  Clone the repo:
-    ```bash
-    git clone [https://github.com/taltol15/LocalBeam.git](https://github.com/taltol15/LocalBeam.git)
-    cd LocalBeam
-    ```
-4.  Run in dev mode:
-    ```bash
-    wails dev
-    ```
-5.  Build for production:
-    ```bash
-    wails build
-    ```
+- **Backend:** Go
+- **Frontend:** React + Vite
+- **Desktop shell:** Wails v2
+- **Discovery:** UDP + [zeroconf](https://github.com/grandcat/zeroconf) (mDNS)
 
-## 📝 License
+## Build from source
 
-This project is open-source and available under the **MIT License**.
+1. Install [Go](https://go.dev/) and [Node.js](https://nodejs.org/) (LTS recommended).
+2. Install Wails: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
+3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)).
+4. Clone and run:
+
+   ```bash
+   git clone https://github.com/taltol15/LocalBeam.git
+   cd LocalBeam
+   go mod tidy
+   cd frontend && npm install && cd ..
+   wails dev
+   ```
+
+5. Production build:
+
+   ```bash
+   wails build
+   ```
+
+   Output is under `build/bin/`. On macOS, for a universal binary:  
+   `wails build -platform darwin/universal`
+
+## Automated release builds
+
+Pushing a **git tag** matching `v*` (for example `v2.0.0`) runs [`.github/workflows/release.yml`](.github/workflows/release.yml): it builds on **Windows, macOS, and Linux**, uploads artifacts, and creates a **GitHub Release** with those files.
+
+**Create a release from your machine:**
+
+```bash
+git tag v2.0.0
+git push origin v2.0.0
+```
+
+You can also run the workflow manually from the **Actions** tab (**workflow_dispatch**) to verify builds without creating a tag (the *publish release* step only runs for `refs/tags/v*`).
+
+## License
+
+MIT License.
 
 ---
-*Developed with ❤️ by Tal*
+
+*Developed with care by Tal*
