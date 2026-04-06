@@ -48,7 +48,7 @@ Prebuilt binaries are attached to **[GitHub Releases](https://github.com/taltol1
 
 1. Install [Go](https://go.dev/) and [Node.js](https://nodejs.org/) (LTS recommended).
 2. Install Wails: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
-3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)).
+3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)). On Debian/Ubuntu you typically need `libgtk-3-dev` and **`libwebkit2gtk-4.0-dev`** (Wails expects the `webkit2gtk-4.0` pkg-config name).
 4. Clone and run:
 
    ```bash
