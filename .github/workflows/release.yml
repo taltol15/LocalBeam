@@ -6,6 +6,10 @@ on:
       - "v*"
   workflow_dispatch:
 
+# GitHub Actions: opt into Node 24 for JS-based actions (see GH changelog 2025-09-19).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
 
@@ -44,11 +48,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          # Wails links against webkit2gtk-4.0 (pkg-config name), not 4.1
-          sudo apt-get install -y build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.0-dev
+          # Ubuntu 24.10+ often drops webkit2gtk-4.0; Wails uses 4.1 with build tag webkit2_41
+          sudo apt-get install -y build-essential pkg-config libgtk-3-dev libwebkit2gtk-4.1-dev
 
       - name: Install Wails CLI
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.12.0
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -56,7 +60,7 @@ jobs:
 
       - name: Build (Linux)
         if: matrix.id == 'linux'
-        run: wails build -clean
+        run: wails build -clean -tags webkit2_41
 
       - name: Build (Windows)
         if: matrix.id == 'windows'

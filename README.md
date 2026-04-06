@@ -48,7 +48,7 @@ Prebuilt binaries are attached to **[GitHub Releases](https://github.com/taltol1
 
 1. Install [Go](https://go.dev/) and [Node.js](https://nodejs.org/) (LTS recommended).
 2. Install Wails: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
-3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)). On Debian/Ubuntu you typically need `libgtk-3-dev` and **`libwebkit2gtk-4.0-dev`** (Wails expects the `webkit2gtk-4.0` pkg-config name).
+3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)). On Debian/Ubuntu you need `libgtk-3-dev`. For WebKitGTK, use **`libwebkit2gtk-4.1-dev`** and build with **`wails build -tags webkit2_41`** on distros that only ship WebKit 4.1 (common on recent Ubuntu). On older systems that still have **`libwebkit2gtk-4.0-dev`**, a plain `wails build` without that tag is enough.
 4. Clone and run:
 
    ```bash
@@ -80,6 +80,8 @@ git push origin v2.0.0
 ```
 
 You can also run the workflow manually from the **Actions** tab (**workflow_dispatch**) to verify builds without creating a tag (the *publish release* step only runs for `refs/tags/v*`).
+
+**If the Linux job fails, the Release is not created:** the `release` job waits for every matrix build (Windows, macOS, Linux). Fixing Linux (or temporarily removing it from the matrix) is required before assets appear on a tagged release.
 
 ## License
 
