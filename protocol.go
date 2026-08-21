@@ -1,8 +1,7 @@
 package main
 
-// ProtocolVersion is advertised over mDNS TXT, HTTP headers, and discovery JSON
-// for forward-compatible mobile and desktop clients.
-const ProtocolVersion = "2"
+// ProtocolVersion is advertised over mDNS TXT, HTTP headers, and discovery JSON.
+const ProtocolVersion = "3"
 
 const (
 	FileTransferPort = 34567
@@ -10,7 +9,13 @@ const (
 )
 
 const (
-	HeaderPIN             = "X-PIN"
-	HeaderFileSize        = "X-File-Size"
-	HeaderLocalBeamVer    = "X-LocalBeam-Version"
+	HeaderLocalBeamVer = "X-LocalBeam-Version"
+	HeaderFileSize     = "X-File-Size"
+	HeaderUploadToken  = "X-Upload-Token"
+	HeaderTransferID   = "X-Transfer-ID"
+	HeaderSenderName   = "X-Sender-Name"
+	HeaderSenderEmail  = "X-Sender-Email"
 )
+
+// Chunk size for AES-GCM streaming (plaintext per chunk).
+const CryptoChunkSize = 64 * 1024

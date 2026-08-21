@@ -37,6 +37,10 @@ func RegisterMDNS(hostname string) (*zeroconf.Server, error) {
 	txt := []string{
 		"ver=" + ProtocolVersion,
 		fmt.Sprintf("port=%d", FileTransferPort),
+		"tls=1",
+	}
+	if fp := GetCertFingerprint(); fp != "" {
+		txt = append(txt, "fp="+fp)
 	}
 	return zeroconf.Register(instance, mdnsServiceType, mdnsDomain, FileTransferPort, txt, nil)
 }
@@ -91,6 +95,9 @@ func BrowseMDNS(runCtx context.Context, wailsCtx context.Context) {
 			for _, line := range entry.Text {
 				if strings.HasPrefix(line, "ver=") {
 					p.Version = strings.TrimPrefix(line, "ver=")
+				}
+				if strings.HasPrefix(line, "fp=") {
+					p.Fingerprint = strings.TrimPrefix(line, "fp=")
 				}
 			}
 			emitMDNSPeer(wailsCtx, p)

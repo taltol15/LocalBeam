@@ -1,31 +1,42 @@
 # LocalBeam
 
-![Downloads](https://img.shields.io/github/downloads/taltol15/LocalBeam/total?style=for-the-badge&color=blue)
+![Downloads](https://img.shields.io/github/downloads/Trustity/LocalBeam/total?style=for-the-badge&color=3dff8a)
 
-> **Fast. Secure. Local.**  
-> Move files between computers on the same Wi‑Fi or LAN—no cloud, no accounts. **Windows, macOS, and Linux.**
+> **A Trustity Labs experiment**  
+> Encrypted peer-to-peer file transfer on your Wi‑Fi / LAN — no cloud, no accounts. **Windows, macOS, and Linux.**
 
-![LocalBeam Screenshot](https://localbeam.net/app-screen.png)
+LocalBeam is a Trustity Labs project. It is **not** a production Trustity product.
 
 ## Overview
 
-**LocalBeam** is a desktop app for peer-to-peer file transfer on your local network. Transfers use a direct HTTP connection; data stays on your LAN.
+**LocalBeam** moves files between computers on the same local network over a direct connection. Protocol **v3** adds transport TLS, AES-GCM payload encryption, a PIN challenge (PIN is never sent in cleartext), required claimed sender identity for local audit, and **manual Accept / Reject** on the receiver.
 
 Built with **Go** and **React** (Vite) using **Wails v2**.
 
-## Features (2.x)
+## Security (v3)
 
-- **Discovery:** UDP broadcast **plus** **mDNS** (Bonjour / DNS‑SD) so devices find each other more reliably across **Windows ↔ macOS** (and mixed home networks).
-- **Manual address:** Send to an IP or `host:port` if discovery does not list a peer.
-- **Security PIN:** A dynamic 4-digit PIN is required for every incoming transfer.
-- **Progress:** Sender and receiver show upload/download progress.
-- **Offline-first:** No internet required.
-- **Streaming I/O:** Large files are streamed; memory use stays reasonable.
-- **Protocol v2:** Versioned discovery payload and `X-LocalBeam-Version` header; `GET /localbeam/ping` for connectivity checks (useful for future mobile clients).
+| Control | Behavior |
+|--------|----------|
+| **HTTPS** | Ephemeral self-signed TLS on the receiver; fingerprint shown in UI / discovery |
+| **AES-256-GCM** | File stream encrypted; key from Argon2id(PIN, salt) + HKDF(transfer ID) |
+| **PIN** | Crypto-random **6-digit** receive PIN; challenge–response HMAC (not sent as a header) |
+| **Consent** | Receiver must Accept before upload; tip: *Verify with the sender that they are the intended sender of this file.* |
+| **Identity (claimed)** | Sender must provide name + organizational email — logged locally for audit, **not** cryptographically proven |
+| **Audit log** | JSONL on the receiver machine only (no central Trustity logging in Labs) |
+
+PIN rotates after reject or successful receive.
+
+## Features
+
+- **Discovery:** UDP broadcast + **mDNS** (Bonjour / DNS‑SD)
+- **Manual address:** Send to an IP or `host:port` if discovery misses a peer
+- **Progress:** Upload / download progress on both sides
+- **Offline-first:** No internet required for transfer
+- **Streaming I/O:** Chunked encrypt/decrypt for large files
 
 ## Download
 
-Prebuilt binaries are attached to **[GitHub Releases](https://github.com/taltol15/LocalBeam/releases)**.
+Prebuilt binaries are attached to **[GitHub Releases](https://github.com/Trustity/LocalBeam/releases)**.
 
 | Asset | Platform |
 |--------|-----------|
@@ -43,19 +54,20 @@ Prebuilt binaries are attached to **[GitHub Releases](https://github.com/taltol1
 - **Frontend:** React + Vite
 - **Desktop shell:** Wails v2
 - **Discovery:** UDP + [zeroconf](https://github.com/grandcat/zeroconf) (mDNS)
+- **Crypto:** TLS 1.2+, Argon2id, HKDF-SHA256, AES-256-GCM
 
 ## Build from source
 
 1. Install [Go](https://go.dev/) and [Node.js](https://nodejs.org/) (LTS recommended).
 2. Install Wails: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
-3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)). On Debian/Ubuntu you need `libgtk-3-dev`. For WebKitGTK, use **`libwebkit2gtk-4.1-dev`** and build with **`wails build -tags webkit2_41`** on distros that only ship WebKit 4.1 (common on recent Ubuntu). On older systems that still have **`libwebkit2gtk-4.0-dev`**, a plain `wails build` without that tag is enough.
+3. Install platform dependencies for Wails ([official guide](https://wails.io/docs/gettingstarted/installation)). On Debian/Ubuntu you need `libgtk-3-dev`. For WebKitGTK, use **`libwebkit2gtk-4.1-dev`** and build with **`wails build -tags webkit2_41`** on distros that only ship WebKit 4.1. On older systems with **`libwebkit2gtk-4.0-dev`**, a plain `wails build` is enough.
 4. Clone and run:
 
    ```bash
-   git clone https://github.com/taltol15/LocalBeam.git
+   git clone https://github.com/Trustity/LocalBeam.git
    cd LocalBeam
    go mod tidy
-   cd frontend && npm install && cd ..
+   cd frontend && npm install && npm run build && cd ..
    wails dev
    ```
 
@@ -70,18 +82,12 @@ Prebuilt binaries are attached to **[GitHub Releases](https://github.com/taltol1
 
 ## Automated release builds
 
-Pushing a **git tag** matching `v*` (for example `v2.0.0`) runs [`.github/workflows/release.yml`](.github/workflows/release.yml): it builds on **Windows, macOS, and Linux**, uploads artifacts, and creates a **GitHub Release** with those files.
-
-**Create a release from your machine:**
+Pushing a **git tag** matching `v*` (for example `v3.0.0`) runs [`.github/workflows/release.yml`](.github/workflows/release.yml): it builds on **Windows, macOS, and Linux**, uploads artifacts, and creates a **GitHub Release**.
 
 ```bash
-git tag v2.0.0
-git push origin v2.0.0
+git tag v3.0.0
+git push origin v3.0.0
 ```
-
-You can also run the workflow manually from the **Actions** tab (**workflow_dispatch**) to verify builds without creating a tag (the *publish release* step only runs for `refs/tags/v*`).
-
-**If the Linux job fails, the Release is not created:** the `release` job waits for every matrix build (Windows, macOS, Linux). Fixing Linux (or temporarily removing it from the matrix) is required before assets appear on a tagged release.
 
 ## License
 
@@ -89,4 +95,4 @@ MIT License.
 
 ---
 
-*Developed with care by Tal*
+*Trustity Labs · LocalBeam*

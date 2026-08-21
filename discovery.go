@@ -13,10 +13,11 @@ import (
 
 // Peer is a discovered device on the LAN (UDP and/or mDNS).
 type Peer struct {
-	Hostname string `json:"hostname"`
-	IP       string `json:"ip"`
-	Port     int    `json:"port"`
-	Version  string `json:"version,omitempty"`
+	Hostname    string `json:"hostname"`
+	IP          string `json:"ip"`
+	Port        int    `json:"port"`
+	Version     string `json:"version,omitempty"`
+	Fingerprint string `json:"fingerprint,omitempty"`
 }
 
 // DiscoveryService אחראי על מציאת מחשבים
